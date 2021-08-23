@@ -1,3 +1,8 @@
+"""Pulling and saving copies of remote pages, to the local filesystem 
+
+Precursor to both scraping links and indexing page content into a search engine.
+"""
+
 import json
 import uuid
 import datetime
