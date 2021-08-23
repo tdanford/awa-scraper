@@ -1,4 +1,5 @@
 import requests
+import re
 from bs4 import BeautifulSoup as BS
 from lxml import etree
 import time
@@ -22,6 +23,34 @@ class DataSource:
 
     def find_links(self):
         return []
+
+class AIHRCReports(DataSource): 
+	def __init__(self): 
+		DataSource.__init__(
+			self, 
+			"Afghanistan Independent Human Rights Commission", 
+			"https://www.refworld.org/publisher/AIHRC.html"
+		)
+	def find_links(self): 
+		segment_link_pattern = re.compile("AIHRC,+\\d+.html") 
+		segment_name_pattern = re.compile('\\d+')
+		response = requests.get(self.url) 
+		soup = BS(response.text, 'html.parser') 
+		links = [x for x in soup.find_all('a') if x.get('href') is not None]
+		other_parts = [x for x in links if segment_link_pattern.search(x.get('href')) is not None and segment_name_pattern.search(x.text) is not None]
+		urls = [self.url] + [urljoin(self.url, link.get('href')) for link in other_parts] 
+
+		with tqdm(total=len(urls), position=0) as pbar: 
+			for url in urls: 
+				response = requests.get(url) 
+				soup = BS(response.text, 'html.parser') 
+				links = [x for x in soup.find_all('a') if x.get('href') is not None and 'itemlink' in x.get_attribute_list('class')] 
+				for link in links: 
+					title = link.text.strip().replace('\n', '') 
+					href = urljoin(url, link.get('href')) 
+					yield title, href 
+				pbar.update(1) 
+
 
 class CentcomQuarterlyReports(DataSource): 
 	def __init__(self): 
