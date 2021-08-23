@@ -1,9 +1,9 @@
 import tqdm
 import csv
 from awa.sources.white_house import WhiteHouseReleases
-from awa.sources.data_source import SigarReports, AREUReports
+from awa.sources.data_source import SigarReports, AREUReports, CentcomQuarterlyReports
 
-source_list = [WhiteHouseReleases, SigarReports, AREUReports]
+source_list = [WhiteHouseReleases, SigarReports, AREUReports, CentcomQuarterlyReports]
 
 
 def clean_title(title):
