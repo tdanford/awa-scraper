@@ -43,11 +43,12 @@ default_index = CacheIndex(dir=cache_dir)
 
 
 class Cached:
-    def __init__(self, url, index=default_index, ignore_errors=False):
+    def __init__(self, url, index=default_index, ignore_errors=False, cacheable=True):
         self.url = url
         self.index = index
         self.id = index.key(self.url)
         self.ignore_errors = ignore_errors
+        self.cacheable = cacheable
 
     def soup(self):
         return BS(self.get(), "html.parser")
@@ -60,6 +61,9 @@ class Cached:
 
     def is_cached(self):
         return self.cached_path().exists()
+    
+    def links(self): 
+        return [x for x in self.soup().find_all('a') if x.get('href') is not None]
 
     def clear(self):
         cached = self.cached_path()
@@ -68,13 +72,16 @@ class Cached:
 
     def get(self):
         cached = self.cached_path()
-        if cached.exists():
+        if (
+            self.cacheable and cached.exists()
+        ):  # only check the cache if the item is cache-able
             return cached.read_text()
         else:
             response = requests.get(self.url)
             if response.status_code == 200:
-                cached.write_text(response.text)
-                CacheIndex().append_entry(self.url)
+                if self.cacheable:  # only cache the result if the item is cache-able
+                    cached.write_text(response.text)
+                    CacheIndex().append_entry(self.url)
                 return response.text
             else:
                 logging.error(
