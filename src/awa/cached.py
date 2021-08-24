@@ -2,13 +2,14 @@ import requests
 import os
 import pathlib
 import hashlib
-import logging 
+import logging
 
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup as BS
 from awa.crawler import CrawlerError
 
 cache_dir = os.getenv("CACHE_DIR", "cache")
+
 
 class CacheIndex:
     def __init__(self, dir=cache_dir):
@@ -22,7 +23,7 @@ class CacheIndex:
         else:
             self.load_index()
 
-    def key(self, url): 
+    def key(self, url):
         return hashlib.sha256(url.encode("UTF-8")).hexdigest()
 
     def load_index(self):
@@ -37,13 +38,15 @@ class CacheIndex:
     def contains(self, url):
         return url in self.index
 
+
 default_index = CacheIndex(dir=cache_dir)
+
 
 class Cached:
     def __init__(self, url, index=default_index, ignore_errors=False):
         self.url = url
-        self.index = index 
-        self.id = index.key(self.url) 
+        self.index = index
+        self.id = index.key(self.url)
         self.ignore_errors = ignore_errors
 
     def soup(self):
@@ -69,13 +72,15 @@ class Cached:
             return cached.read_text()
         else:
             response = requests.get(self.url)
-            if response.status_code == 200: 
+            if response.status_code == 200:
                 cached.write_text(response.text)
                 CacheIndex().append_entry(self.url)
                 return response.text
-            else: 
-                logging.error(f"Received error code {response.status_code} from {self.url}")
-                if not self.ignore_errors: 
+            else:
+                logging.error(
+                    f"Received error code {response.status_code} from {self.url}"
+                )
+                if not self.ignore_errors:
                     raise CrawlerError(self.url)
-                else: 
-                    return None 
+                else:
+                    return None

@@ -20,7 +20,7 @@ class WhiteHouseReleases(DataSource):
         )
 
     def find_links(self):
-        count = 27 # dumb, hard-coded.
+        count = 27  # dumb, hard-coded.
         all_pages = [RemarksIndexPage(i + 1) for i in range(count)]
         crawler = CrawlingQueue(all_pages, retriever=lambda v: v.retrieve())
         for index_page, remarks_page in crawler.crawl():
@@ -35,7 +35,8 @@ class RemarksIndexPage(Cached):
 
     def __init__(self, index):
         Cached.__init__(
-            self, f"https://www.whitehouse.gov/briefing-room/speeches-remarks/page/{index}/"
+            self,
+            f"https://www.whitehouse.gov/briefing-room/speeches-remarks/page/{index}/",
         )
 
     def retrieve(self):
@@ -43,9 +44,12 @@ class RemarksIndexPage(Cached):
         self.links = [
             x
             for x in parsed.find_all("a")
-            if x.get("href") is not None and "news-item__title" in x.get_attribute_list("class")
+            if x.get("href") is not None
+            and "news-item__title" in x.get_attribute_list("class")
         ]
-        self.remarks = [Remarks(link.get_text(), link.get("href")) for link in self.links]
+        self.remarks = [
+            Remarks(link.get_text(), link.get("href")) for link in self.links
+        ]
         return self
 
 
@@ -59,7 +63,9 @@ class Remarks(Cached):
     def retrieve(self):
         parsed = self.soup()
         sections = parsed.find_all("section")
-        body_sections = [x for x in sections if "body-content" in x.get_attribute_list("class")]
+        body_sections = [
+            x for x in sections if "body-content" in x.get_attribute_list("class")
+        ]
         if len(body_sections) == 0:
             raise ValueError("Can't find body-content section in {self.url}")
         self.text = body_sections[0].get_text()

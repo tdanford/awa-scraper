@@ -1,5 +1,5 @@
-import logging 
-import pathlib 
+import logging
+import pathlib
 
 from awa.sources import output_master_csv
 

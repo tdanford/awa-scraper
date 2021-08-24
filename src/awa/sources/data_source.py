@@ -50,7 +50,9 @@ class AIHRCReports(DataSource):
         parsed = self.soup()
         links = [x for x in parsed.find_all("a") if x.get("href") is not None]
         other_parts = [x for x in links if self.is_result_page_link(x)]
-        urls = [self.url] + [self.relative_url(link.get("href")) for link in other_parts]
+        urls = [self.url] + [
+            self.relative_url(link.get("href")) for link in other_parts
+        ]
         cacheable = [Cached(u) for u in urls]
 
         with tqdm(total=len(urls), position=0) as pbar:
@@ -59,7 +61,8 @@ class AIHRCReports(DataSource):
                 links = [
                     x
                     for x in soup.find_all("a")
-                    if x.get("href") is not None and "itemlink" in x.get_attribute_list("class")
+                    if x.get("href") is not None
+                    and "itemlink" in x.get_attribute_list("class")
                 ]
                 for link in links:
                     title = link.text.strip().replace("\n", "")
@@ -84,7 +87,11 @@ class CentcomQuarterlyReports(DataSource):
         with tqdm(total=len(self.urls), position=0) as pbar:
             for url in self.urls:
                 cached = Cached(url)
-                links = [x for x in cached.soup().find_all("a") if x.get("href").endswith("pdf")]
+                links = [
+                    x
+                    for x in cached.soup().find_all("a")
+                    if x.get("href").endswith("pdf")
+                ]
                 for link in links:
                     title = link.get("href").split("/")[-1]
                     link = cached.relative_url(link.get("href"))
@@ -118,8 +125,10 @@ class SigarReports(DataSource):
         ]
 
     def find_links(self):
-        queue = CrawlingQueue([Cached(u, ignore_errors=True) for u in self.sigar_xml_urls], bar_position=0)
-        for cached, xml_string in queue.crawl(): 
+        queue = CrawlingQueue(
+            [Cached(u, ignore_errors=True) for u in self.sigar_xml_urls], bar_position=0
+        )
+        for cached, xml_string in queue.crawl():
             try:
                 root = etree.fromstring(xml_string.encode("UTF-8"))
                 for item in root.findall("*/item"):
@@ -129,8 +138,8 @@ class SigarReports(DataSource):
                     yield title, full_link
             except etree.XMLSyntaxError as err:
                 pass
-            except AttributeError as err: 
-                pass 
+            except AttributeError as err:
+                pass
 
 
 class AREUReports(DataSource):

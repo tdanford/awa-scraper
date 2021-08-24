@@ -2,12 +2,15 @@
 """
 import requests
 import time
-import logging 
+import logging
 
 from tqdm import tqdm
 
+
 class CrawlingQueue:
-    def __init__(self, retrievables, delay=0.25, bar_position=0, retriever=lambda v: v.get()):
+    def __init__(
+        self, retrievables, delay=0.25, bar_position=0, retriever=lambda v: v.get()
+    ):
         self.retrievables = retrievables
         self.retrieved = []
         self.delay = delay
