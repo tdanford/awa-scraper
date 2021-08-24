@@ -13,7 +13,10 @@ class CrawlingQueue:
         self.delay = delay
 
     def crawl(self):
-        with tqdm(total=len(self.retrievables) if not self.follow_links else float("inf"), position=0) as pbar: 
+        with tqdm(
+            total=len(self.retrievables) if not self.follow_links else float("inf"),
+            position=0,
+        ) as pbar:
             while len(self.retrievables) > 0:
                 time.sleep(self.delay)
                 r = self.retrievables.pop()
@@ -22,7 +25,7 @@ class CrawlingQueue:
                 if self.follow_links:
                     self.retrievables.extend(next)
                 yield r
-                pbar.update(1) 
+                pbar.update(1)
 
 
 class CrawlerError(Exception):
