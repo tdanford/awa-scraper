@@ -49,9 +49,7 @@ class REG:
 
         scope = "https://www.googleapis.com/auth/spreadsheets.readonly"
 
-        storage = oauth2client.file.Storage(
-            os.path.join(self._output_dir, "sheets_creds.json")
-        )
+        storage = oauth2client.file.Storage(os.path.join(self._output_dir, "sheets_creds.json"))
         credentials = storage.get()
         if not credentials:
             flow = oauth2client.client.OAuth2WebServerFlow(
@@ -91,9 +89,7 @@ if __name__ == "__main__":
     )
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--output_dir", default="./output", help="Where to dump output file"
-    )
+    parser.add_argument("--output_dir", default="./output", help="Where to dump output file")
 
     args = parser.parse_args()
 

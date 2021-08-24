@@ -8,9 +8,7 @@ class CRSReports(DataSource):
     def __init__(self, path=None):
         DataSource.__init__(self, "CRS Reports", "https://crsreports.congress.gov/")
         self.path = (
-            path
-            if path is not None
-            else pathlib.Path.cwd() / "crs-afghanistan-links.csv"
+            path if path is not None else pathlib.Path.cwd() / "links" / "crs-afghanistan-links.csv"
         )
 
     def find_links(self):

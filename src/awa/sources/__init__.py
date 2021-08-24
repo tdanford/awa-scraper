@@ -36,5 +36,6 @@ def generate_links():
 def output_master_csv(path):
     with path.open("wt") as outf:
         csv_writer = csv.writer(outf)
+        csv_writer.writerow(["Source Name", "Source URL", "Name", "URL"])
         for source_name, source_url, title, link in generate_links():
             csv_writer.writerow([source_name, source_url, title, link])
