@@ -1,6 +1,7 @@
 import requests
 import re
 import time
+import logging 
 
 from tqdm import tqdm
 from urllib.parse import urljoin
@@ -125,21 +126,29 @@ class SigarReports(DataSource):
         ]
 
     def find_links(self):
+        cached = [Cached(u, ignore_errors=True, cacheable=False) for u in self.sigar_xml_urls]
         queue = CrawlingQueue(
-            [Cached(u, ignore_errors=True) for u in self.sigar_xml_urls], bar_position=0
+            cached, 
+            bar_position=0
         )
-        for cached, xml_string in queue.crawl():
+        c = 0
+        for cached, xml_bytes in queue.crawl():
             try:
-                root = etree.fromstring(xml_string.encode("UTF-8"))
+                root = etree.fromstring(xml_bytes)
                 for item in root.findall("*/item"):
                     title = item.find("title").text
                     relative_link = item.find("link").text.replace("\n", "").strip()
                     full_link = cached.relative_url(relative_link)
                     yield title, full_link
+                    c += 1
             except etree.XMLSyntaxError as err:
+                logging.error(f"XMLSyntaxError {err}")
                 pass
             except AttributeError as err:
                 pass
+            except ValueError as err:
+                pass
+        logging.info(f"# SIGAR Reports: {c}")
 
 
 class AREUReports(DataSource):
