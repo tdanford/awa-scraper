@@ -8,6 +8,13 @@ setup(
     description="Scraper Utilities for AWA",
     url="https://www.github.com/tdanford/awa-scraper",
     package_dir={"": "src"},
-    install_requires=["requests", "gspread", "beautifulsoup4", "tqdm"],
+    install_requires=[
+        "requests",
+        "gspread",
+        "beautifulsoup4",
+        "tqdm",
+        "docker",
+        "elasticsearch",
+    ],
     tests_require=["pytest", "black", "pytest-black"],
 )
