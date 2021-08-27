@@ -2,12 +2,15 @@ import elasticsearch
 import pathlib
 import sys
 import docker
+import os
 
 from pprint import pprint
 
 from awa.cached import default_index, Indexable
 
-es = elasticsearch.Elasticsearch(["localhost"])
+ES_HOST = os.getenv("ELASTICSEARCH_HOST", "localhost")
+
+es = elasticsearch.Elasticsearch([ES_HOST])
 
 indexable_cache = {}
 
