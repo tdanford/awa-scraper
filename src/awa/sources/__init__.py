@@ -1,11 +1,13 @@
 from awa.sources.crs_source import CRSReports
-import logging 
+import logging
 import csv
 import tqdm
 
+from awa.logging import configure_logging
 from awa.sources.white_house import WhiteHouseReleases
 from awa.sources.crs_source import CRSReports
 from awa.sources.statedepartment import DOSPressBriefings
+from awa.sources.senate import SenateForeignRelationsTranscripts
 from awa.sources.data_source import (
     AIHRCReports,
     SigarReports,
@@ -20,16 +22,10 @@ source_list = [
     CentcomQuarterlyReports,
     AIHRCReports,
     CRSReports,
-    DOSPressBriefings, 
+    DOSPressBriefings,
+    SenateForeignRelationsTranscripts,
 ]
 
-def configure_logging(): 
-    formatter = logging.basicConfig(
-        format="%(asctime)s.%(msecs)03dZ %(levelname)s:%(name)s:%(message)s",
-        datefmt="%Y-%m-%dT%H:%M:%S",
-        level=logging.INFO,
-    )
-    return formatter
 
 def clean_title(title):
     return title.replace("\t", "").replace("\n", "").strip()

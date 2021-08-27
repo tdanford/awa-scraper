@@ -1,7 +1,7 @@
 import pathlib
 import csv
 
-from awa.sources.data_source import DataSource
+from awa.data_source import DataSource
 
 
 class CRSReports(DataSource):

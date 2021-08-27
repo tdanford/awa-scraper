@@ -4,7 +4,7 @@ import requests
 from tqdm import tqdm
 from bs4 import BeautifulSoup as BSoup
 
-from awa.sources.data_source import DataSource
+from awa.data_source import DataSource
 from awa.crawler import CrawlingQueue
 from awa.cached import Cached
 

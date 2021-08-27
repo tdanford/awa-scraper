@@ -15,6 +15,8 @@ setup(
         "tqdm",
         "docker",
         "elasticsearch",
+        "oauth2client",
+        "click",
     ],
     tests_require=["pytest", "black", "pytest-black"],
 )
