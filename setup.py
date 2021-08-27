@@ -17,6 +17,8 @@ setup(
         "elasticsearch",
         "oauth2client",
         "click",
+        "fastapi", 
+        "aiofiles"
     ],
     tests_require=["pytest", "black", "pytest-black"],
 )

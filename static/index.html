@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            AWA Search
+        </title>
+
+        <style>
+            html {
+                height: 100%;
+            }
+            body {
+                width: 100%; 
+                height: 100%; 
+            }
+            .searchcontainer {
+                width: 100%; 
+                text-align: center; 
+                padding-top: 20%;
+            }
+            #searchbox {
+                font-size: 2em;
+            }
+            .searchbutton {
+                font-size: 2em;
+            }
+
+            .results {
+                overflow: scroll;
+            }
+
+            .resultitem {
+
+            }
+            
+            .highlight {
+                padding: 0.5em; 
+                font-size: smaller; 
+            }
+
+            .highlight em {
+                color: red;
+            }
+        </style>
+
+        <script>
+            var resultElmt = null; 
+
+            function renderAnchor(result) {
+                let anchor = document.createElement("a"); 
+                anchor.href = result.url; 
+                anchor.target = "_blank";
+                anchor.style.display = "block"; 
+                anchor.appendChild(document.createTextNode(result.url)); 
+
+                return anchor; 
+            }
+
+            function renderHighlight(highlight) {
+                let div = document.createElement("div"); 
+                div.className = "highlight"; 
+                div.innerHTML = highlight; 
+                return div; 
+            }
+
+            function renderResult(result) {
+                let resultDiv = document.createElement("div"); 
+                resultDiv.className = "resultitem"; 
+                resultDiv.appendChild(renderAnchor(result)); 
+                for(var i = 0; i < result.highlights.length; i++) {
+                    resultDiv.appendChild(renderHighlight(result.highlights[i]))
+                }
+                return resultDiv; 
+            }
+
+            function makeList(elmts) {
+                let list = document.createElement("ol"); 
+                for(var i = 0; i < elmts.length; i++) {
+                    let elmt = elmts[i]; 
+                    let item = document.createElement("li"); 
+                    item.appendChild(elmt); 
+                    list.appendChild(item); 
+                }
+                return list; 
+            }
+
+            function clearChildren(elmt) {
+                while (elmt.firstChild) {
+                    elmt.removeChild(elmt.firstChild);
+                }
+                return elmt; 
+            }
+
+            function doSearch(event) {
+                let searchBox = document.getElementById("searchbox"); 
+                let searchContainer = document.querySelector(".searchcontainer"); 
+                searchContainer.style.paddingTop = '0%'; 
+                let query = searchBox.value; 
+                let resultContainer = clearChildren(document.querySelector('.results'));
+                resultContainer.style.height = '90%'; 
+                resultContainer.appendChild(document.createTextNode(`Searching for ${query}...`));
+
+                var searchRequest = new Request(
+                    `/search?query=${query}`, 
+                );
+                fetch(searchRequest)
+                    .then(response => response.json())
+                    .then(data => {
+                        let anchors = data.results.map(renderResult); 
+                        clearChildren(resultContainer); 
+                        resultContainer.appendChild(makeList(anchors)); 
+                    });
+            }
+
+            function setup() {
+                const button = document.querySelector(".searchbutton"); 
+                button.addEventListener('click', doSearch); 
+            }
+
+            window.onload = setup; 
+        </script>
+    </head>
+    <body>
+        <div class="searchcontainer">
+            <input id="searchbox" type="text" />
+            <button class="searchbutton">Search</button>
+        </div>
+
+        <div class="results">
+
+        </div>
+
+    </body>
+</html>
